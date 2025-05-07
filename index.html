@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Сюрприз для двоих</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
+
+      .floating {
+        animation: float 3s ease-in-out infinite;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      .heart-beat {
+        animation: heartbeat 1.5s ease-in-out infinite;
+      }
+
+      @keyframes heartbeat {
+        0% {
+          transform: scale(1);
+        }
+        25% {
+          transform: scale(1.05);
+        }
+        50% {
+          transform: scale(1);
+        }
+        75% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .pulse {
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-gradient-to-br from-pink-100 to-purple-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-md">
+      <!-- Шапка приложения -->
+      <header class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-pink-600 mb-2">Сюрприз для двоих</h1>
+        <p class="text-lg text-pink-500">Веселые задания для вашей пары</p>
+      </header>
+
+      <!-- Основной блок с заданием -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 text-center">
+        <div class="h-64 flex flex-col justify-center items-center">
+          <div id="task-container" class="hidden fade-in">
+            <div class="text-6xl mb-4 text-pink-500 heart-beat">
+              <i id="task-icon" class="fas fa-heart"></i>
+            </div>
+            <p
+              id="task-text"
+              class="text-xl font-medium text-gray-800 mb-4"
+            ></p>
+            <div class="text-sm text-pink-400">
+              <i class="fas fa-clock mr-1"></i> Время выполнения:
+              <span id="task-time">2-5 минут</span>
+            </div>
+          </div>
+
+          <div id="welcome-message" class="fade-in">
+            <div class="text-6xl mb-4 text-pink-500 floating">
+              <i class="fas fa-gift"></i>
+            </div>
+            <p class="text-xl font-medium text-gray-800 mb-6">
+              Нажмите на кнопку, чтобы получить веселое задание!
+            </p>
+          </div>
+        </div>
+
+        <div class="flex space-x-3 mb-4">
+          <button
+            onclick="generateTask('all')"
+            class="flex-1 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg text-sm font-bold shadow hover:from-pink-600 hover:to-purple-600 transition"
+          >
+            <i class="fas fa-random mr-1"></i> Любое
+          </button>
+          <button
+            onclick="generateTask('closeness')"
+            class="flex-1 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg text-sm font-bold shadow hover:from-red-600 hover:to-pink-600 transition"
+          >
+            <i class="fas fa-heart mr-1"></i> Близость
+          </button>
+        </div>
+
+        <button
+          onclick="generateTask('all')"
+          class="w-full py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-xl text-lg font-bold shadow-lg hover:from-pink-600 hover:to-purple-600 transition-all transform hover:scale-[1.02] pulse"
+        >
+          <i class="fas fa-random mr-2"></i> Получить задание
+        </button>
+      </div>
+
+      <!-- История заданий -->
+      <!-- <div class="bg-white rounded-2xl shadow-lg p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold text-gray-800">
+            <i class="fas fa-history text-pink-500 mr-2"></i> История заданий
+          </h2>
+          <button
+            onclick="clearHistory()"
+            class="text-sm bg-pink-100 text-pink-600 px-3 py-1 rounded-lg hover:bg-pink-200 transition"
+          >
+            <i class="fas fa-trash-alt mr-1"></i> Очистить
+          </button>
+        </div>
+
+        <div id="history-list" class="space-y-3 max-h-64 overflow-y-auto pr-2">
+          <div class="text-center py-4 text-gray-400 italic">
+            Здесь будут ваши выполненные задания
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+    <script>
+      // Список веселых и легких заданий
+      const tasks = [
+        {
+          text: "Поменяйтесь местами (если сидите рядом)",
+          icon: "fa-exchange-alt",
+          time: "1 минута",
+          type: "all",
+        },
+        {
+          text: "Обнимитесь и постойте так 10 секунд",
+          icon: "fa-hands-helping",
+          time: "10 секунд",
+          type: "closeness",
+        },
+        {
+          text: "Скажите друг другу по комплименту",
+          icon: "fa-comment-dots",
+          time: "1 минута",
+          type: "all",
+        },
+        {
+          text: "Погуляйте сегодня вечером вместе",
+          icon: "fa-walking",
+          time: "30+ минут",
+          type: "all",
+        },
+        {
+          text: "Обменяйтесь номерами и созвонитесь вечером",
+          icon: "fa-phone-alt",
+          time: "3 минуты",
+          type: "all",
+        },
+        {
+          text: "Сыграйте в игру 'Камень, ножницы, бумага'",
+          icon: "fa-hand-rock",
+          time: "2 минуты",
+          type: "all",
+        },
+        {
+          text: "Напишите друг другу смешное сообщение",
+          icon: "fa-sms",
+          time: "2 минуты",
+          type: "all",
+        },
+        {
+          text: "Сделайте друг другу массаж рук",
+          icon: "fa-hand-holding-heart",
+          time: "3 минуты",
+          type: "closeness",
+        },
+        {
+          text: "Спойте вместе куплет из любой песни",
+          icon: "fa-music",
+          time: "1 минута",
+          type: "all",
+        },
+        {
+          text: "Придумайте секретное рукопожатие",
+          icon: "fa-handshake",
+          time: "3 минуты",
+          type: "all",
+        },
+        {
+          text: "Посмотрите друг другу в глаза 30 секунд",
+          icon: "fa-eye",
+          time: "30 секунд",
+          type: "closeness",
+        },
+        {
+          text: "Расскажите смешной случай из детства",
+          icon: "fa-grin-squint-tears",
+          time: "2 минуты",
+          type: "all",
+        },
+        {
+          text: "Покормите друг друга с закрытыми глазами",
+          icon: "fa-utensils",
+          time: "2 минуты",
+          type: "closeness",
+        },
+        {
+          text: "Станцуйте вместе под любую песню",
+          icon: "fa-heartbeat",
+          time: "3 минуты",
+          type: "all",
+        },
+        {
+          text: "Нарисуйте портреты друг друга",
+          icon: "fa-paint-brush",
+          time: "5 минут",
+          type: "all",
+        },
+        {
+          text: "Придумайте друг другу смешные прозвища",
+          icon: "fa-signature",
+          time: "2 минуты",
+          type: "all",
+        },
+        {
+          text: "Сделайте селфи с глупыми лицами",
+          icon: "fa-grin-tongue-wink",
+          time: "1 минута",
+          type: "all",
+        },
+        {
+          text: "Покажите друг другу смешные видео",
+          icon: "fa-video",
+          time: "5 минут",
+          type: "all",
+        },
+        {
+          text: "Пощекочите друг друга",
+          icon: "fa-laugh-squint",
+          time: "1 минута",
+          type: "all",
+        },
+        {
+          text: "Придумайте историю по очереди (каждый по предложению)",
+          icon: "fa-book-open",
+          time: "3 минуты",
+          type: "all",
+        },
+        // Новые задания на близость
+        {
+          text: "Подержитесь за руки 1 минуту",
+          icon: "fa-hand-holding",
+          time: "1 минута",
+          type: "closeness",
+        },
+        {
+          text: "Создайте зрительный контакт и смотрите друг другу в глаза",
+          icon: "fa-eye",
+          time: "20 секунд",
+          type: "closeness",
+        },
+        {
+          text: "Шепните друг другу что-то приятное на ушко",
+          icon: "fa-ear-listen",
+          time: "1 минута",
+          type: "closeness",
+        },
+        {
+          text: "Сядьте спиной к спине и почувствуйте дыхание друг друга",
+          icon: "fa-people-arrows",
+          time: "2 минуты",
+          type: "closeness",
+        },
+        {
+          text: "Поцелуйте друг друга в щеку одновременно",
+          icon: "fa-kiss-wink-heart",
+          time: "10 секунд",
+          type: "closeness",
+        },
+        {
+          text: "Обнимитесь без слов, просто чувствуя близость",
+          icon: "fa-heart",
+          time: "30 секунд",
+          type: "closeness",
+        },
+        {
+          text: "Погладьте друг друга по волосам",
+          icon: "fa-hand-sparkles",
+          time: "1 минута",
+          type: "closeness",
+        },
+        {
+          text: "Синхронно подышите: вдох-выдох вместе",
+          icon: "fa-wind",
+          time: "1 минута",
+          type: "closeness",
+        },
+        {
+          text: "Закройте глаза и прикоснитесь к лицу друг друга",
+          icon: "fa-hands",
+          time: "2 минуты",
+          type: "closeness",
+        },
+        {
+          text: "Скажите «Я тебя люблю» одновременно",
+          icon: "fa-heart-circle-bolt",
+          time: "10 секунд",
+          type: "closeness",
+        },
+        {
+          text: "Обнимитесь и послушайте, как бьются ваши сердца",
+          icon: "fa-heartbeat",
+          time: "1 минута",
+          type: "closeness",
+        },
+        {
+          text: "Создайте совместно рисунок, каждый добавляя по одному элементу",
+          icon: "fa-paint-brush",
+          time: "10 минут",
+          type: "closeness",
+        },
+        {
+          text: "Скажите друг другу три вещи, за которые вы благодарны",
+          icon: "fa-thumbs-up",
+          time: "3 минуты",
+          type: "closeness",
+        },
+        {
+          text: "Пройдите по комнате, держа друг друга за плечи",
+          icon: "fa-user-friends",
+          time: "5 минут",
+          type: "closeness",
+        },
+        {
+          text: "Сделайте друг другу сюрприз",
+          icon: "fa-gift",
+          time: "5 минут",
+          type: "closeness",
+        },
+        {
+          text: "Обсудите ваши мечты и желания на будущее",
+          icon: "fa-dreamcatcher",
+          time: "10 минут",
+          type: "closeness",
+        },
+        {
+          text: "Покажите друг другу свои любимые места на телефоне",
+          icon: "fa-mobile-alt",
+          time: "5 минут",
+          type: "closeness",
+        },
+        {
+          text: "Сделайте друг другу массаж плеч",
+          icon: "fa-hand-holding-heart",
+          time: "3 минуты",
+          type: "closeness",
+        },
+        {
+          text: "Скажите друг другу что-то приятное, глядя в глаза",
+          icon: "fa-eye",
+          time: "2 минуты",
+          type: "closeness",
+        },
+        {
+          text: "Почитайте друг другу вслух книгу или стихотворение",
+          icon: "fa-book",
+          time: "5 минут",
+          type: "closeness",
+        },
+      ];
+
+      function generateTask(type = "all") {
+        // Скрываем приветственное сообщение
+        document.getElementById("welcome-message").classList.add("hidden");
+
+        // Показываем контейнер с заданием
+        const taskContainer = document.getElementById("task-container");
+        taskContainer.classList.remove("hidden");
+        taskContainer.classList.add("fade-in");
+
+        // Фильтруем задания по типу
+        let filteredTasks = tasks;
+        if (type !== "all") {
+          filteredTasks = tasks.filter((task) => task.type === type);
+        }
+
+        // Выбираем случайное задание
+        const randomTask =
+          filteredTasks[Math.floor(Math.random() * filteredTasks.length)];
+
+        // Устанавливаем задание
+        document.getElementById("task-text").textContent = randomTask.text;
+        document.getElementById(
+          "task-icon"
+        ).className = `fas ${randomTask.icon} heart-beat`;
+        document.getElementById("task-time").textContent = randomTask.time;
+
+        // Добавляем задание в историю
+        addToHistory(randomTask);
+
+        // Анимация сердечка
+        setTimeout(() => {
+          document.getElementById("task-icon").classList.add("heart-beat");
+        }, 100);
+      }
+
+      function addToHistory(task) {
+        const historyList = document.getElementById("history-list");
+
+        // Убираем сообщение "здесь будут задания", если оно есть
+        if (
+          historyList.firstChild &&
+          historyList.firstChild.classList.contains("text-center")
+        ) {
+          historyList.removeChild(historyList.firstChild);
+        }
+
+        // Создаем элемент истории
+        const historyItem = document.createElement("div");
+        historyItem.className =
+          "bg-pink-50 rounded-lg p-3 flex items-start fade-in";
+
+        // Разные цвета для разных типов заданий
+        const iconColor =
+          task.type === "closeness" ? "text-red-500" : "text-pink-500";
+
+        historyItem.innerHTML = `
+                <div class="${iconColor} text-xl mr-3">
+                    <i class="fas ${task.icon}"></i>
+                </div>
+                <div>
+                    <p class="text-gray-800">${task.text}</p>
+                    <p class="text-xs text-gray-500 mt-1">
+                        <i class="far fa-clock mr-1"></i> ${
+                          task.time
+                        } • ${new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+                    </p>
+                </div>
+            `;
+
+        // Добавляем в начало списка
+        historyList.insertBefore(historyItem, historyList.firstChild);
+      }
+
+      function clearHistory() {
+        const historyList = document.getElementById("history-list");
+        historyList.innerHTML = `
+                <div class="text-center py-4 text-gray-400 italic">
+                    Здесь будут ваши выполненные задания
+                </div>
+            `;
+      }
+    </script>
+  </body>
+</html>
